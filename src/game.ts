@@ -386,12 +386,13 @@ export class Game {
       } else {
         if (!t.body && dy > 40) continue; // anchors must be above-ish
         s = d;
-        if (dx * this.facing > 0) s -= 120;
+        if (this.input.held('up')) s += dy * 1.2; // holding Up aims the web upward
+        else if (dx * this.facing > 0) s -= 120;
         if (!t.body && dy < 0) s += dy * 0.5; // prefer anchors higher up
         if (speed > 3) s -= ((dx * vel.x + dy * vel.y) / (d * speed)) * 90;
         if (t.body) s += t.prop?.type === 'ball' ? 20 : 90;
-        if (this.tether && Math.hypot(t.x - this.tether.x, t.y - this.tether.y) < 5) s += 400;
       }
+      if (this.tether && Math.hypot(t.x - this.tether.x, t.y - this.tether.y) < 5) continue; // chain to a *new* anchor
       if (s < bestS && this.validTarget(t, o)) { bestS = s; best = t; }
     }
     return best;
@@ -403,7 +404,8 @@ export class Game {
     const clicked = inp.mouse.clicked;
     if (inp.mouse.rclicked && this.tether) { this.releaseTether(false); return; }
     if (inp.pressed('tether') || clicked) {
-      if (this.tether && !clicked) { this.releaseTether(false); return; }
+      // tether key while swinging: chain to the highlighted next anchor, or let go if there is none
+      if (this.tether && !clicked && !this.target) { this.releaseTether(false); return; }
       if (this.target) this.attach(this.target);
       else {
         // failed attempt: fizzle toward the aim direction
@@ -680,9 +682,12 @@ export class Game {
       if (p.x > L.x - 10 && p.x < L.x + L.w + 10 && p.y > L.y - 40 && p.y < L.y + L.h) {
         const v = b.velocity;
         const g = G_STEP * this.gravityScale;
-        const targetVy = p.y < L.y + 60 ? -1 : -8.5;
+        const top = p.y < L.y + 90;
+        // rise steadily, then hover at the top and drift toward the Spire Crown
+        const targetVy = top ? (L.y + 15 - p.y) * 0.08 : -8.5;
         const nvy = approach(v.y, targetVy, g + 0.45);
-        Body.setVelocity(b, { x: v.x * 0.98 + ((L.x + L.w / 2) - p.x) * (p.y < L.y + 80 ? 0 : 0.004), y: nvy });
+        const nvx = top ? approach(v.x, -2.6, 0.12) : v.x * 0.98 + ((L.x + L.w / 2) - p.x) * 0.004;
+        Body.setVelocity(b, { x: nvx, y: nvy });
         if (isPlayer && Math.random() < 0.3) this.particles.push({ x: p.x + (Math.random() - 0.5) * 40, y: p.y + 30, vx: 0, vy: -2, life: 0, max: 30, color: '#7af7ff', size: 2, g: 0 });
       }
     };

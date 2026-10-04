@@ -312,7 +312,7 @@ window.addEventListener('keydown', e => {
   if (e.code === 'Enter' && dlg) advanceDlg();
 });
 window.addEventListener('pointerdown', () => audio.unlock());
-document.addEventListener('visibilitychange', () => { if (document.hidden) { game.persist(); if (state === 'play' && !paused) setPaused(true); } });
+document.addEventListener('visibilitychange', () => { if (document.hidden && (state === 'play' || state === 'ending')) { game.persist(); if (state === 'play' && !paused) setPaused(true); } });
 window.addEventListener('beforeunload', () => { if (state === 'play' || state === 'ending') game.persist(); });
 
 // ------------------------------------------------------------------ loop

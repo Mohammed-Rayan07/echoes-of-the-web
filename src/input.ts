@@ -5,7 +5,7 @@ export class Input {
   down = new Set<string>();
   private pressedQ = new Set<string>();
   private releasedQ = new Set<string>();
-  mouse = { x: 0, y: 0, clicked: false, rclicked: false, lastMove: 0 };
+  mouse = { x: 0, y: 0, clicked: false, rclicked: false, lastMove: -1e9 };
   pad: Gamepad | null = null;
   private padPrev: boolean[] = [];
   padPressed = new Set<number>();
