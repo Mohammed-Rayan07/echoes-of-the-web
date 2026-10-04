@@ -239,8 +239,8 @@ export class Renderer {
       const px = 640, py = 1700;
       ctx.strokeStyle = '#c9a36b'; ctx.lineWidth = 3;
       ctx.beginPath(); ctx.moveTo(gb.min.x + 20, gb.min.y); ctx.lineTo(px - 20, py); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(px + 20, py); ctx.lineTo(pb.min.x + 100, pb.min.y - 130); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(pb.min.x + 100, pb.min.y - 130); ctx.lineTo(pb.min.x + 10, pb.min.y); ctx.moveTo(pb.min.x + 100, pb.min.y - 130); ctx.lineTo(pb.max.x - 10, pb.min.y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px + 20, py); ctx.lineTo(pb.min.x + 100, pb.min.y - 160 + g.panOffset); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(pb.min.x + 100, pb.min.y - 160 + g.panOffset); ctx.lineTo(pb.min.x + 4, pb.min.y + g.panOffset); ctx.moveTo(pb.min.x + 100, pb.min.y - 160 + g.panOffset); ctx.lineTo(pb.max.x - 4, pb.min.y + g.panOffset); ctx.stroke();
       ctx.fillStyle = '#3a2a20'; ctx.strokeStyle = '#ffae42'; ctx.lineWidth = 3;
       ctx.beginPath(); ctx.arc(px, py, 22, 0, 7); ctx.fill(); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + Math.cos(g.gateRise / 20) * 20, py + Math.sin(g.gateRise / 20) * 20); ctx.stroke();
@@ -250,8 +250,11 @@ export class Renderer {
       for (let y = gb.min.y + 10; y < gb.max.y; y += 30) { ctx.beginPath(); ctx.moveTo(gb.min.x, y); ctx.lineTo(gb.max.x, y); ctx.stroke(); }
       ctx.strokeRect(gb.min.x, gb.min.y, gb.max.x - gb.min.x, gb.max.y - gb.min.y);
       // pan
-      ctx.fillStyle = '#6b4a2a'; ctx.fillRect(pb.min.x, pb.min.y, pb.max.x - pb.min.x, 12);
-      ctx.strokeStyle = '#ffae42'; ctx.strokeRect(pb.min.x, pb.min.y, pb.max.x - pb.min.x, 12);
+      const po = g.panOffset;
+      ctx.fillStyle = '#120a06'; ctx.fillRect(pb.min.x, pb.min.y, pb.max.x - pb.min.x, 30);
+      ctx.fillStyle = '#6b4a2a'; ctx.fillRect(pb.min.x + 2, pb.min.y + po, pb.max.x - pb.min.x - 4, 10);
+      ctx.strokeStyle = '#ffae42'; ctx.strokeRect(pb.min.x + 2, pb.min.y + po, pb.max.x - pb.min.x - 4, 10);
+      ctx.fillStyle = '#ffae42'; ctx.font = 'bold 12px Inter, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('▼ PAN ▼', (pb.min.x + pb.max.x) / 2, pb.min.y + 26);
       // gauge
       const w = g.panWeight, done = g.save.quests.A === 'done';
       ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(700, 1930, 200, 50);

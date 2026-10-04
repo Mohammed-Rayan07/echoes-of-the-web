@@ -144,14 +144,14 @@ export interface CrateDef { id: string; x: number; y: number; size: number; type
 export const CRATES: CrateDef[] = [
   { id: 'c1', x: 1100, y: G - 30, size: 60, type: 'light', zone: 'foundry' },
   { id: 'c2', x: 1180, y: G - 30, size: 60, type: 'light', zone: 'foundry' },
-  { id: 'c3', x: 1420, y: 1960, size: 60, type: 'light', zone: 'foundry' },
-  { id: 'iron1', x: 1740, y: 1685, size: 70, type: 'iron', zone: 'foundry' },
+  { id: 'c3', x: 1495, y: 1960, size: 60, type: 'light', zone: 'foundry' },
+  { id: 'iron1', x: 1367, y: 1955, size: 70, type: 'iron', zone: 'foundry' },
   { id: 'iron2', x: 5060, y: 1915, size: 70, type: 'iron', zone: 'docks' },
   { id: 'c4', x: 3500, y: G - 30, size: 60, type: 'light', zone: 'plaza' },
 ];
 
 export const QUEST_GEOM = {
-  pan: { x: 700, y: 2170, w: 200, h: 30 },          // counterweight pan (top surface)
+  pan: { x: 700, y: 2197, w: 200, h: 20 },          // counterweight pan (top surface, flush with the floor)
   gate: { x: 520, y: 1960, w: 40, h: 240 },         // furnace gate (closed)
   fragA: { x: 300, y: 2140 },
   ballPivot: { x: 5700, y: 1500 }, ballLen: 360, ballR: 46,

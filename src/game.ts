@@ -363,7 +363,16 @@ export class Game {
   private validTarget(t: Target, o: { x: number; y: number }) {
     const d = Math.hypot(t.x - o.x, t.y - o.y);
     if (d > TETHER_RANGE || d < 30) return false;
-    return this.lineOfSight(o, { x: t.x, y: t.y }, t.body);
+    if (this.lineOfSight(o, { x: t.x, y: t.y }, t.body)) return true;
+    // objects: any visible part of the body counts (corners pulled slightly inward)
+    if (t.body) {
+      const c = t.body.position;
+      for (const v of t.body.vertices) {
+        const p = { x: c.x + (v.x - c.x) * 0.85, y: c.y + (v.y - c.y) * 0.85 };
+        if (this.lineOfSight(o, p, t.body)) return true;
+      }
+    }
+    return false;
   }
 
   mouseWorld(): { x: number; y: number } | null { return (this as any)._mouseWorld ?? null; }
@@ -621,13 +630,11 @@ export class Game {
   }
 
   private updateQuestA() {
-    const top = Q.pan.y + this.panOffset;
-    const on = this.bodiesOnRegion(Q.pan.x, Q.pan.x + Q.pan.w, top);
+    const on = this.bodiesOnRegion(Q.pan.x, Q.pan.x + Q.pan.w, Q.pan.y);
     let w = 0; on.forEach(b => (w += this.weightOf(b)));
     this.panWeight = w;
     const targetOff = Math.min(w, 4) * 6;
-    const nOff = approach(this.panOffset, targetOff, 0.6);
-    if (nOff !== this.panOffset) { this.panOffset = nOff; Body.setPosition(this.pan, { x: Q.pan.x + Q.pan.w / 2, y: Q.pan.y + Q.pan.h / 2 + this.panOffset }); }
+    this.panOffset = approach(this.panOffset, targetOff, 0.6); // visual sink only (body stays flush so blocks slide on)
     // counterweight: gate (3 units) only lifts when the pan outweighs it
     const done = this.save.quests.A === 'done';
     let targetRise = done ? 230 : w >= 3 ? 230 : w * 5;
