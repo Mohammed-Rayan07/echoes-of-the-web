@@ -4,6 +4,8 @@
 
 ### ▶ Play it: **https://echoes-of-the-web.vercel.app**
 
+### 🎬 Walkthrough video: _link coming soon_
+
 Silicon Maze 2026 · Dev Task 4. Runs in any modern desktop browser. Nothing to install, and progress saves automatically.
 
 ---
@@ -22,20 +24,20 @@ All keys can be remapped in **Settings**. The game is fully playable on keyboard
 |---|---|
 | Run | **A / D** or **← / →** |
 | Jump (hold for higher, single jump only) | **Space** (or **W / ↑** when not swinging) |
-| Fire web tether at the highlighted anchor/object | **Shift** or **K**, or **left-click** to aim with the mouse |
-| Chain to the next anchor mid-swing | **Shift / K** again (hold **W** to prefer anchors above) |
+| Fire web tether at the yellow-reticle target | **K** or **Shift**, or **left-click** near any anchor/object to aim with the mouse |
+| Chain to the next anchor mid-swing | **K / Shift** again (hold **W** to prefer anchors above) |
 | Reel in / out | **W / S** (or **↑ / ↓**) while tethered |
 | Pump the swing | **A / D** while swinging |
 | Release (with upward boost) | **Space** (or right-click) |
 | Elastic slingshot | hold **C** or **L** while tethered, then release |
 | Grab / drop light crates and the orb · talk · launcher lever | **E** |
-| Throw along the dotted arc | **Q** |
+| Throw along the dotted arc (hold **W** for a lob, **S** for a flat throw) | **Q** |
 | Respawn at last checkpoint | hold **R** |
 | Journal (quests, physics, shard hints) | **J** or **Tab** |
 | Pause menu | **Esc** or **P** |
 | Physics debug view | **F3** or **`** |
 
-Gamepad: left stick moves · A jumps · RB/RT tether · X grabs · Y throws · LB/LT slingshot · Start pauses.
+Gamepad: left stick moves · A jumps · RB/RT tether · X grabs · Y throws · LB/LT slingshot · B respawns · Back opens the journal · Start pauses.
 
 ## The world
 
@@ -95,7 +97,7 @@ Built on **Matter.js** rigid-body physics, with the game logic written on top of
 - **No soft locks:**
   - Checkpoint lamps auto-activate. Hold R to respawn. Water and the void respawn you automatically.
   - Lost quest objects (in water, out of their zone, out of the world) return home automatically.
-  - *Reset puzzle in this zone* is in the pause menu.
+  - *Reset puzzle in this zone* is in the pause menu. It returns objects home and rebuilds the seawall if its fragment is still there, so you can try the other solution.
   - The furnace gate never closes on you.
   - Quests have no ordering dependencies.
 

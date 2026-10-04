@@ -46,7 +46,7 @@ export class Input {
   released(a: Action): boolean { return this.codes(a).some(c => this.releasedQ.has(c)); }
 
   // gamepad mapping (standard layout)
-  private padMap: Partial<Record<Action, number[]>> = { jump: [0], tether: [5, 7], grab: [2], throw: [3], respawn: [8], journal: [8], pause: [9], slingshot: [4, 6], up: [12], down: [13], left: [14], right: [15] };
+  private padMap: Partial<Record<Action, number[]>> = { jump: [0], tether: [5, 7], grab: [2], throw: [3], respawn: [1], journal: [8], pause: [9], slingshot: [4, 6], up: [12], down: [13], left: [14], right: [15] };
   private padHeld(a: Action) {
     const p = this.pad; if (!p) return false;
     const ax = p.axes[0] ?? 0, ay = p.axes[1] ?? 0;

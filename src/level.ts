@@ -77,7 +77,7 @@ export const ANCHORS: AnchorDef[] = [
   // foundry
   { x: 420, y: 1640 }, { x: 760, y: 1360 }, { x: 1150, y: 1640 }, { x: 1500, y: 1500 }, { x: 1820, y: 1180 }, { x: 1250, y: 1300 },
   // plaza
-  { x: 2500, y: 1560 }, { x: 2800, y: 1380 }, { x: 3220, y: 1300 }, { x: 3600, y: 1360 }, { x: 4000, y: 1300 }, { x: 3060, y: 1080 }, { x: 4250, y: 1250 },
+  { x: 2500, y: 1560 }, { x: 2800, y: 1380 }, { x: 2840, y: 1830 }, { x: 3220, y: 1300 }, { x: 3600, y: 1360 }, { x: 4000, y: 1300 }, { x: 3060, y: 1080 }, { x: 4250, y: 1250 },
   // plaza → gardens climb
   { x: 3290, y: 760 }, { x: 3360, y: 1030 }, { x: 3570, y: 820 }, { x: 3030, y: 820 }, { x: 5120, y: 1220 }, { x: 5180, y: 780 }, { x: 1780, y: 820 },
   // docks
@@ -123,7 +123,8 @@ export const NPCS: NpcDef[] = [
   { id: 'mayor', name: 'Mayor Ilse', x: 2930, y: G, color: '#3ff0d0', lines: [
     'Thank the stars, a web-slinger! The surge shattered the Aether Core.',
     'Three Aether Fragments are lost: the Foundry, the Frozen Docks and the Sky Gardens. Go in any order.',
-    'Bring all three back to the Core. Press J any time to check your journal.',
+    'Try your web on that glowing anchor above us: press K (or click it), swing with A/D, let go with Space.',
+    'Bring all three fragments back to the Core. Press J any time to check your journal.',
   ] },
   { id: 'smith', name: 'Forgehand Bo', x: 1000, y: G, color: '#ffae42', lines: [
     'The furnace gate is tied to that counterweight pan by a pulley.',

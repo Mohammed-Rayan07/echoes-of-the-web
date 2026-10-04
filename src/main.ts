@@ -167,7 +167,7 @@ function renderControls() {
   $('controlsBody').innerHTML = `<div class="ctrl">
     <span>${k('left')} ${k('right')}</span><span>Run (momentum carries, ice has no grip)</span>
     <span>${k('jump')} ${k('up')}</span><span>Jump (hold for higher, one jump only)</span>
-    <span>${k('tether')} / Left-click</span><span>Fire web tether at the highlighted anchor or object (click aims with the mouse)</span>
+    <span>${k('tether')} / Left-click</span><span>Fire web tether at the yellow-reticle target (or click near any anchor/object to aim with the mouse)</span>
     <span>${k('up')} ${k('down')}</span><span>Reel the tether in / out (haul objects toward you)</span>
     <span>${k('left')} ${k('right')} (swinging)</span><span>Pump the swing to build momentum</span>
     <span>${k('jump')} (swinging)</span><span>Release with an upward boost, then re-attach mid-air</span>
@@ -178,7 +178,7 @@ function renderControls() {
     <span>${k('journal')}</span><span>Journal: quests, physics and shards</span>
     <span>${k('pause')}</span><span>Pause menu: settings, reset puzzle, new game</span>
     <span>${k('debug')}</span><span>Physics debug view</span>
-  </div><p class="small">Gamepad: left stick move · A jump · RB/RT tether · X grab · Y throw · LB/LT slingshot · Start pause.</p>`;
+  </div><p class="small">Gamepad: left stick move · A jump · RB/RT tether · X grab · Y throw · LB/LT slingshot · B respawn · Back journal · Start pause.</p><p class="small">Tip: hold ${k('up')} while throwing for a high lob, ${k('down')} for a flat throw.</p>`;
 }
 
 function openOverlay(id: string) { overlays.forEach(o => $(o).classList.add('hidden')); $(id).classList.remove('hidden'); }
@@ -316,6 +316,7 @@ document.addEventListener('visibilitychange', () => { if (document.hidden && (st
 window.addEventListener('beforeunload', () => { if (state === 'play' || state === 'ending') game.persist(); });
 
 // ------------------------------------------------------------------ loop
+let padMenuPrev = [false, false];
 let last = performance.now(), acc = 0, lastRender = 0, fpsT = 0, fpsN = 0, fps = 0, stepsThisSec = 0, sps = 0;
 const urlFps = Number(new URLSearchParams(location.search).get('fps'));
 function frame(now: number) {
@@ -326,6 +327,14 @@ function frame(now: number) {
   const dt = Math.min(0.1, (now - last) / 1000); last = now;
   fpsT += dt; fpsN++;
   if (fpsT >= 1) { fps = fpsN / fpsT; sps = stepsThisSec / fpsT; fpsT = 0; fpsN = 0; stepsThisSec = 0; }
+  // gamepad menu buttons (Start = pause, Back/Select = journal)
+  const gp = navigator.getGamepads ? Array.from(navigator.getGamepads()).find(p => p && p.connected) : null;
+  if (gp) {
+    const st = !!gp.buttons[9]?.pressed, bk = !!gp.buttons[8]?.pressed;
+    if (st && !padMenuPrev[0]) { if (state === 'play') setPaused(!paused); }
+    if (bk && !padMenuPrev[1] && state === 'play' && !paused) toggleJournal();
+    padMenuPrev = [st, bk];
+  }
   const mw = renderer.toWorld(input.mouse.x, input.mouse.y);
   (game as any)._mouseWorld = mw;
   if ((state === 'play' || state === 'ending') && !paused) {
@@ -360,7 +369,7 @@ requestAnimationFrame(frame);
 (window as any).__game = {
   game, renderer, settings: S,
   tp(x: number, y: number) { Matter.Body.setPosition(game.player, { x, y }); Matter.Body.setVelocity(game.player, { x: 0, y: 0 }); },
-  corrupt() { localStorage.setItem(SAVE_KEY, '{"version":1,"shards":"oops"'); },
+  corrupt() { state = 'title'; paused = false; game.paused = false; localStorage.setItem(SAVE_KEY, '{"version":1,"shards":"oops"'); return 'Save corrupted. Refresh the page to see safe recovery.'; },
   surge() { game.triggerSurge(); },
   // deterministic test driver: run n fixed steps holding the given key codes
   run(n: number, keys: string[] = [], press: string[] = []) {

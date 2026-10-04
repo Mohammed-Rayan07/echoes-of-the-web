@@ -202,6 +202,14 @@ export class Game {
     let n = 0;
     for (const p of this.props) if (p.zone === z) { this.resetProp(p); n++; }
     if (z === 'gardens') this.launcherNotch = 2;
+    // rebuild the seawall if its fragment hasn't been taken yet (lets you try the other solution)
+    if (z === 'docks' && this.save.quests.B !== 'done' && !this.seawall) {
+      this.seawall = Bodies.rectangle(Q.seawall.x + Q.seawall.w / 2, Q.seawall.y + Q.seawall.h / 2, Q.seawall.w, Q.seawall.h, { isStatic: true, label: 'seawall' });
+      Composite.add(this.engine.world, this.seawall); this.terrain.push(this.seawall);
+      for (const d of this.debris) Composite.remove(this.engine.world, d.body);
+      this.debris = [];
+      if (this.pos.x > Q.seawall.x) this.respawn(false);
+    }
     this.ui.toast(n ? `Puzzle objects in ${ZONES.find(q => q.id === z)!.name} reset.` : 'Nothing to reset here.', 'info');
   }
 
@@ -377,10 +385,10 @@ export class Game {
 
   mouseWorld(): { x: number; y: number } | null { return (this as any)._mouseWorld ?? null; }
 
-  pickTarget(): Target | null {
+  pickTarget(mouseAim = false): Target | null {
     const o = this.tetherOrigin();
     const mw = this.mouseWorld();
-    const mouseRecent = mw && performance.now() - this.input.mouse.lastMove < 2500;
+    const mouseRecent = mouseAim && !!mw;
     let best: Target | null = null, bestS = Infinity;
     const vel = this.player.velocity;
     const speed = Math.hypot(vel.x, vel.y);
@@ -411,6 +419,7 @@ export class Game {
     const inp = this.input;
     this.target = this.pickTarget();
     const clicked = inp.mouse.clicked;
+    if (clicked) this.target = this.pickTarget(true); // a click aims at the anchor nearest the cursor
     if (inp.mouse.rclicked && this.tether) { this.releaseTether(false); return; }
     if (inp.pressed('tether') || clicked) {
       // tether key while swinging: chain to the highlighted next anchor, or let go if there is none
@@ -554,21 +563,24 @@ export class Game {
     const b = this.carry.prop.body;
     Composite.remove(this.engine.world, this.carry.c);
     this.carry = null;
-    let dx = this.facing * 0.82, dy = -0.57;
-    const mw = this.mouseWorld();
-    if (mw && performance.now() - this.input.mouse.lastMove < 2500) { dx = mw.x - b.position.x; dy = mw.y - b.position.y; const l = Math.hypot(dx, dy) || 1; dx /= l; dy /= l; }
+    const [dx, dy] = this.throwDir();
     const pv = this.player.velocity, power = 13;
     Body.setVelocity(b, { x: pv.x + dx * power, y: pv.y * 0.5 + dy * power });
     setTimeout(() => { b.collisionFilter.mask = 0xffff; }, 250);
     this.audio.play('throw');
   }
 
+  throwDir(): [number, number] {
+    // forward arc; hold Up for a steep lob, Down for a flat throw
+    if (this.input.held('up')) return [this.facing * 0.45, -0.89];
+    if (this.input.held('down')) return [this.facing * 0.97, -0.24];
+    return [this.facing * 0.82, -0.57];
+  }
+
   throwPreview(): { x: number; y: number }[] | null {
     if (!this.carry) return null;
     const b = this.carry.prop.body;
-    let dx = this.facing * 0.82, dy = -0.57;
-    const mw = this.mouseWorld();
-    if (mw && performance.now() - this.input.mouse.lastMove < 2500) { dx = mw.x - b.position.x; dy = mw.y - b.position.y; const l = Math.hypot(dx, dy) || 1; dx /= l; dy /= l; }
+    const [dx, dy] = this.throwDir();
     const pv = this.player.velocity;
     return this.arc(b.position.x, b.position.y, pv.x + dx * 13, pv.y * 0.5 + dy * 13, 45);
   }

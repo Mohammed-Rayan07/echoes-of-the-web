@@ -27,7 +27,7 @@ export const DEFAULT_BINDINGS: Record<Action, string[]> = {
   up: ['KeyW', 'ArrowUp'],
   down: ['KeyS', 'ArrowDown'],
   jump: ['Space'],
-  tether: ['ShiftLeft', 'KeyK'],
+  tether: ['KeyK', 'ShiftLeft'],
   slingshot: ['KeyC', 'KeyL'],
   grab: ['KeyE'],
   throw: ['KeyQ'],
