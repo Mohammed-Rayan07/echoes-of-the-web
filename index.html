@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Echoes of the Web</title>
+<meta name="description" content="A physics-driven web-slinger open world: swing, haul, launch and smash your way to restore the Aether Core." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%2306141f'/><path d='M32 8 L44 32 L32 56 L20 32Z' fill='%237af7ff'/><path d='M8 8 L32 32' stroke='%23fff' stroke-width='3'/></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+<style>
+  :root { --ts: 1; --bg: rgba(6,16,24,0.82); --line: rgba(122,247,255,0.35); --fg: #eafcff; --muted: #9fc3cc; --acc: #7af7ff; --gold: #ffe066; --bad: #ff5d6c; --good: #7dff9a; }
+  :root.hc { --bg: #000; --line: #fff; --fg: #fff; --muted: #fff; --acc: #ffff00; --gold: #ffff00; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #04090d; overflow: hidden; color: var(--fg); font-family: Inter, system-ui, sans-serif; font-size: calc(15px * var(--ts)); }
+  canvas { display: block; position: fixed; inset: 0; outline: none; }
+  .hidden { display: none !important; }
+  h1, h2, h3, .disp { font-family: 'Chakra Petch', Inter, sans-serif; letter-spacing: 0.04em; }
+  .panel { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; backdrop-filter: blur(6px); }
+  #hud { position: fixed; inset: 0; pointer-events: none; }
+  #obj { position: absolute; left: 16px; top: 16px; max-width: min(440px, 60vw); padding: 10px 14px; }
+  #obj .lbl { font-size: 0.72em; color: var(--acc); font-weight: 800; letter-spacing: 0.14em; }
+  #obj .txt { margin-top: 2px; line-height: 1.35; }
+  #obj .zone { margin-top: 6px; font-size: 0.78em; color: var(--muted); }
+  #counts { position: absolute; right: 16px; top: 16px; padding: 10px 14px; text-align: right; }
+  #counts .row { display: flex; gap: 10px; align-items: center; justify-content: flex-end; font-weight: 800; }
+  .frag { display: inline-block; width: 14px; height: 20px; background: #334; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+  .frag.on { background: var(--gold); box-shadow: 0 0 10px var(--gold); }
+  #hint { position: absolute; left: 16px; bottom: 16px; padding: 8px 12px; font-size: 0.85em; color: var(--muted); max-width: 60vw; }
+  #hint b { color: var(--fg); }
+  kbd { display: inline-block; padding: 1px 6px; border: 1px solid var(--line); border-radius: 5px; font-family: Inter, sans-serif; font-size: 0.85em; color: var(--fg); background: rgba(255,255,255,0.06); }
+  #toasts { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 6px; align-items: center; width: min(560px, 90vw); }
+  .toast { padding: 8px 14px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); font-weight: 600; text-align: center; animation: tin .25s ease-out; }
+  .toast.good { border-color: var(--good); } .toast.warn { border-color: var(--gold); color: var(--gold); } .toast.bad { border-color: var(--bad); }
+  .toast.quest { border-color: var(--gold); background: rgba(60,48,0,0.85); color: #fff6c2; font-size: 1.05em; }
+  :root.rm .toast { animation: none; }
+  @keyframes tin { from { opacity: 0; transform: translateY(-8px); } }
+  #banner { position: absolute; top: 22%; left: 50%; transform: translateX(-50%); text-align: center; transition: opacity .6s; opacity: 0; text-shadow: 0 2px 20px #000; }
+  #banner h2 { margin: 0; font-size: 2.6em; }
+  #banner p { margin: 4px 0 0; color: var(--muted); }
+  #dialog { position: absolute; left: 50%; bottom: 64px; transform: translateX(-50%); width: min(640px, 92vw); padding: 12px 16px; pointer-events: auto; }
+  #dialog .who { font-weight: 800; font-size: 0.85em; letter-spacing: 0.08em; }
+  #dialog .line { margin-top: 4px; line-height: 1.4; min-height: 2.6em; }
+  #dialog .more { font-size: 0.75em; color: var(--muted); text-align: right; }
+  #respawnTip { position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%); }
+  #debugInfo { position: absolute; right: 16px; bottom: 16px; padding: 8px 10px; font: 12px/1.4 monospace; white-space: pre; }
+  #tension { position: absolute; left: 50%; bottom: 120px; transform: translateX(-50%); width: 160px; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.1); overflow: hidden; }
+  #tension i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--acc), #ff9a40); }
+
+  .overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: radial-gradient(ellipse at center, rgba(4,12,18,0.55), rgba(2,6,10,0.92)); z-index: 10; padding: 16px; }
+  .card { width: min(560px, 100%); max-height: 92vh; overflow: auto; padding: 24px 26px; }
+  .title { text-align: center; }
+  .title h1 { font-size: 3.2em; margin: 0; line-height: 1; background: linear-gradient(90deg, #7af7ff, #b48cff, #ffae42); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  :root.hc .title h1 { color: #ff0; background: none; }
+  .title .tag { color: var(--muted); margin: 10px 0 22px; }
+  .btns { display: flex; flex-direction: column; gap: 10px; }
+  button { font: inherit; font-weight: 700; padding: 11px 16px; border-radius: 10px; border: 1px solid var(--line); background: rgba(122,247,255,0.08); color: var(--fg); cursor: pointer; }
+  button:hover, button:focus-visible { background: rgba(122,247,255,0.2); outline: 2px solid var(--acc); outline-offset: 2px; }
+  button.primary { background: linear-gradient(90deg, rgba(122,247,255,0.35), rgba(180,140,255,0.35)); }
+  button.danger { border-color: var(--bad); }
+  .row2 { display: flex; gap: 10px; } .row2 > * { flex: 1; }
+  .set { display: grid; grid-template-columns: 1fr auto; gap: 10px 14px; align-items: center; margin: 14px 0; }
+  .set label { color: var(--fg); }
+  input[type=range] { width: 160px; accent-color: #7af7ff; }
+  input[type=checkbox] { width: 20px; height: 20px; accent-color: #7af7ff; }
+  select { font: inherit; background: #0b1b22; color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 4px; }
+  .keys { display: grid; grid-template-columns: 1fr auto; gap: 6px 10px; align-items: center; }
+  .keys button { padding: 4px 10px; font-size: 0.85em; min-width: 120px; }
+  .small { font-size: 0.82em; color: var(--muted); }
+  #journal { position: fixed; right: 16px; top: 90px; width: min(420px, 92vw); max-height: calc(100vh - 120px); overflow: auto; padding: 16px 18px; z-index: 5; }
+  #journal h3 { margin: 0 0 8px; }
+  .q { padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.08); }
+  .q .t { font-weight: 800; } .q.done .t { color: var(--good); } .q.locked { opacity: 0.55; }
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+  .tags span { font-size: 0.72em; padding: 2px 7px; border-radius: 99px; border: 1px solid var(--line); color: var(--acc); }
+  .tags span.multi { border-color: var(--gold); color: var(--gold); }
+  .story p { line-height: 1.55; font-size: 1.08em; }
+  .ctrl { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; align-items: center; }
+  .stats { display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; margin: 16px 0; }
+  .stats b { color: var(--gold); }
+</style>
+</head>
+<body>
+<canvas id="c" tabindex="0" aria-label="Game view"></canvas>
+
+<div id="hud" class="hidden" aria-live="polite">
+  <div id="obj" class="panel"><div class="lbl">OBJECTIVE</div><div class="txt" id="objTxt"></div><div class="zone" id="zoneTxt"></div></div>
+  <div id="counts" class="panel">
+    <div class="row"><span id="fragIcons"></span></div>
+    <div class="row" style="margin-top:6px"><span style="color:var(--acc)">◆</span><span id="shardTxt">0/8</span><span class="small">Echo Shards</span></div>
+  </div>
+  <div id="toasts"></div>
+  <div id="banner"><h2 class="disp" id="bannerT"></h2><p id="bannerS"></p></div>
+  <div id="hint" class="panel"></div>
+  <div id="tension" class="hidden"><i></i></div>
+  <div id="dialog" class="panel hidden"><div class="who" id="dlgWho"></div><div class="line" id="dlgLine"></div><div class="more">Enter / click: next · keeps playing while open</div></div>
+  <div id="debugInfo" class="panel hidden"></div>
+</div>
+
+<div id="journal" class="panel hidden" role="dialog" aria-label="Journal"></div>
+
+<div id="title" class="overlay">
+  <div class="card panel title">
+    <h1>ECHOES<br/>OF THE WEB</h1>
+    <div class="tag">Swing, haul, launch and smash your way through a city broken by an Aether surge.</div>
+    <div class="btns">
+      <button id="btnContinue" class="primary hidden">Continue</button>
+      <button id="btnNew">New Game</button>
+      <div class="row2"><button id="btnSettings">Settings</button><button id="btnControls">Controls</button></div>
+    </div>
+    <p class="small" id="saveInfo" style="margin-top:14px"></p>
+  </div>
+</div>
+
+<div id="intro" class="overlay hidden"><div class="card panel story"><div id="introBody"></div><div class="row2" style="margin-top:16px"><button id="introSkip">Skip</button><button id="introNext" class="primary">Next ▶</button></div></div></div>
+
+<div id="pause" class="overlay hidden">
+  <div class="card panel">
+    <h2 style="margin-top:0">Paused</h2>
+    <div class="btns">
+      <button id="pResume" class="primary">Resume</button>
+      <button id="pJournal">Journal</button>
+      <div class="row2"><button id="pSettings">Settings</button><button id="pControls">Controls</button></div>
+      <div class="row2"><button id="pRespawn">Respawn at checkpoint</button><button id="pReset">Reset puzzle in this zone</button></div>
+      <button id="pTitle">Save &amp; quit to title</button>
+      <button id="pNew" class="danger">Reset progress (New Game)</button>
+    </div>
+  </div>
+</div>
+
+<div id="settings" class="overlay hidden"><div class="card panel"><h2 style="margin-top:0">Settings</h2><div id="settingsBody"></div><button id="setClose" class="primary" style="width:100%;margin-top:12px">Done</button></div></div>
+<div id="controls" class="overlay hidden"><div class="card panel"><h2 style="margin-top:0">Controls</h2><div id="controlsBody"></div><button id="ctlClose" class="primary" style="width:100%;margin-top:14px">Got it</button></div></div>
+<div id="confirm" class="overlay hidden"><div class="card panel"><h3 id="cfText" style="margin-top:0"></h3><div class="row2"><button id="cfNo">Cancel</button><button id="cfYes" class="danger">Yes, reset</button></div></div></div>
+<div id="ending" class="overlay hidden"><div class="card panel title"><h1>CITY<br/>RESTORED</h1><p class="tag">The Aether Core sings across every district. Bridges hum, furnaces roar, and the beacon lights the harbor home.</p><div class="stats" id="endStats"></div><div class="btns"><button id="endKeep" class="primary">Keep exploring</button><button id="endNew">New Game</button></div></div></div>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
