@@ -4,7 +4,7 @@
 
 ### ▶ Play it: **https://echoes-of-the-web.vercel.app**
 
-### 🎬 Explanation video: **YOUTUBE_LINK_HERE**
+### 🎬 Explanation video: **[YOUTUBE_LINK_HERE](https://youtu.be/PXH9eK7uus0)**
 
 Silicon Maze 2026 · Dev Task 4. Runs in any modern desktop browser. Nothing to install, and progress saves automatically.
 
