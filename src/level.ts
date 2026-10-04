@@ -81,9 +81,9 @@ export const ANCHORS: AnchorDef[] = [
   // plaza → gardens climb
   { x: 3290, y: 760 }, { x: 3360, y: 1030 }, { x: 3570, y: 820 }, { x: 3030, y: 820 }, { x: 5120, y: 1220 }, { x: 5180, y: 780 }, { x: 1780, y: 820 },
   // docks
-  { x: 4700, y: 1560 }, { x: 5050, y: 1560 }, { x: 5420, y: 1600 }, { x: 6360, y: 1680 }, { x: 6680, y: 1620 }, { x: 6980, y: 1660 }, { x: 6180, y: 1780 },
+  { x: 4700, y: 1560 }, { x: 5050, y: 1560 }, { x: 5420, y: 1600 }, { x: 6360, y: 1680 }, { x: 6680, y: 1620 }, { x: 6980, y: 1660 }, { x: 6180, y: 1780 }, { x: 6520, y: 1800 },
   // gardens
-  { x: 2100, y: 700 }, { x: 2520, y: 640 }, { x: 3880, y: 620 }, { x: 4300, y: 450 }, { x: 2900, y: 640 },
+  { x: 2100, y: 700 }, { x: 2520, y: 640 }, { x: 3880, y: 620 }, { x: 4300, y: 450 }, { x: 2900, y: 640 }, { x: 2420, y: 330 },
 ];
 
 export interface ShardDef { id: string; x: number; y: number; hint: string }
@@ -93,7 +93,7 @@ export const SHARDS: ShardDef[] = [
   { id: 's3', x: 2005, y: 1480, hint: 'Foundry chimney ledge — spring pad + tether' },
   { id: 's4', x: 1690, y: 1860, hint: 'Top of the Foundry stack — use a crate as a step' },
   { id: 's5', x: 6530, y: 2210, hint: 'Skimming the harbor — dip low on a swing' },
-  { id: 's6', x: 6830, y: 1520, hint: 'High above the pier — build momentum' },
+  { id: 's6', x: 6830, y: 1650, hint: 'High above the pier — build momentum' },
   { id: 's7', x: 2280, y: 430, hint: 'Floating isle — slingshot or ride an Aether Surge' },
   { id: 's8', x: 4580, y: 590, hint: 'East spire ledge — climb with the tether' },
 ];

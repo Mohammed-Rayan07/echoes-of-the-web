@@ -433,6 +433,8 @@ export class Game {
         this.releaseTether(true);
       } else {
         const charging = inp.held('slingshot');
+        // slingshot: letting go of the charge key launches you with the stored elastic energy
+        if (this.tether.charging && !charging) { this.releaseTether(false); return; }
         if (charging && !this.tether.charging) this.audio.play('shoot');
         this.tether.charging = charging;
         if (charging) this.tether.len = Math.max(TETHER_MIN, this.tether.len - 9);
