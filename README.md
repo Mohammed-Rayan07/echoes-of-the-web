@@ -4,9 +4,38 @@
 
 ### ▶ Play it: **https://echoes-of-the-web.vercel.app**
 
-### 🎬 Walkthrough video: _link coming soon_
+### 🎬 Explanation video: **YOUTUBE_LINK_HERE**
 
 Silicon Maze 2026 · Dev Task 4. Runs in any modern desktop browser. Nothing to install, and progress saves automatically.
+
+
+## ✅ Rubric coverage (where to find each requirement)
+
+| Requirement | Pts | Where it lives in the game |
+|---|---:|---|
+| **1.1 Connected world** | 9 | 4 connected zones (Plaza, Foundry, Docks, Sky Gardens) in one continuous world. Thick static terrain, walls and world boundaries. A follow camera with look-ahead, clamped so it never shows outside the world. Landmarks (Core, clock tower, crane, beacon tower), signposts and zone banners. |
+| **1.2 Physics movement** | 8 | Velocity + acceleration + gravity + ground friction + air drag. Coyote time, jump buffer, variable jump height. **Single jump only**: the ground check probes under the feet, so walls never reset it. A **fixed 60 Hz timestep** keeps it stable at any FPS, and a 30 FPS cap in Settings lets you check. |
+| **1.3 Web tether & swinging** | 8 | An elastic rope constraint to anchors or objects. Swing, pump, reel, release with a boost and re-attach mid-air. A yellow reticle marks the valid target, a glowing line shows the active tether, and a missed shot draws a red "NO ANCHOR" line with a sound. |
+| **2.1 Collectibles** | 8 | **8 Echo Shards**, 5 of which need physics to reach (swing, spring pad, low dip over water, chained tethers, crate step). Pickup burst, toast, `x/8` counter and journal list. |
+| **2.2 World interaction** | 8 | Crates, iron blocks, an orb and a wrecking ball, all responding to forces, gravity and collisions. You can **push** them, **pull** them (tether + reel), **carry and throw** them (E/Q, with a predicted arc), or **tether** them. Iron blocks never tumble, so behaviour stays predictable. |
+| **2.3 Physics quests** | 14 | 3 quests, each with a visible objective and a success state. Together they use **all 6 ideas**: weight, pendulum, momentum, friction, springs, projectile, plus a gravity field. **Seawall** and **Beacon** each **combine ideas**, and **all three have multiple solutions** (details below). |
+| **3.1 Quest flow** | 7 | Intro story cards and Mayor dialogue. The three quests are independent (any order). The final objective unlocks after 3 fragments. |
+| **3.2 World feedback** | 6 | Objective tracker, journal (J) showing active and completed quests, and non-blocking toasts and dialogue. Environment changes show progress: furnace glow, gate latched open, wall rubble, beacon flame, Core lighting up, gravity lift appearing. |
+| **3.3 Save & resume** | 7 | localStorage save of shards, quests, final state, checkpoint and settings. Restored after a refresh. **New Game / Reset Progress** is on the title screen and in the pause menu. Saves are versioned and validated, so invalid or missing data starts safely from the beginning. |
+| **4.1 Gameplay loop** | 9 | Title → intro → quests → final → **ending screen with stats**. Checkpoints, hold-R respawn, and water/void auto-respawn. Lost objects return home automatically, "Reset puzzle in this zone" is in the pause menu, and quests have no ordering dependencies. |
+| **4.2 Presentation & a11y** | 6 | Controls panel and contextual hint bar, readable high-contrast HUD, volume sliders and mute, **reduced motion**, full keyboard play (+ mouse and gamepad). |
+| **4.3 Docs & deployment** | 10 | Live on Vercel. This README covers the premise, controls, stack, setup, physics, limitations and link. The explanation video is linked above. |
+| **Bonus** | +10 | **Debug view (F3)** · **Aether Surge** gravity event · **remappable keys + text scale + high contrast** · **Elastic Slingshot** original mechanic |
+
+### Minimum playable checklist
+1. ✅ Start a new game and understand the objective (intro, Mayor dialogue, objective tracker)
+2. ✅ Explore 3+ connected zones (4)
+3. ✅ Move and swing with physics
+4. ✅ Find and collect objects (8 shards)
+5. ✅ Complete 3 physics quests in any order
+6. ✅ Unlock and finish the final objective (Core → gravity lift → Spire Crown → ending)
+7. ✅ Refresh and continue from saved progress
+8. ✅ Reset progress and begin again without errors
 
 ---
 
